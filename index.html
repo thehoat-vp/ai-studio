@@ -1,1 +1,148 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rachna – AI Photo &amp; Video Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Hind:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2f7;--surface:#fff;--ink:#14213d;--muted:#5b6784;--line:#d5dce8;--accent:#2f4bff;--accent-ink:#fff;--warm:#ff6b4a}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1730;--surface:#17224a;--ink:#eef2ff;--muted:#a3afd1;--line:#2b3868;--accent:#7b8dff;--accent-ink:#0f1730;--warm:#ff8a6e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Hind,system-ui,sans-serif;line-height:1.6}
+header,main,footer{max-width:1040px;margin:0 auto;padding:0 20px}
+header{display:flex;justify-content:space-between;align-items:center;padding-top:22px;padding-bottom:22px}
+.logo{font-family:Fraunces,Georgia,serif;font-weight:800;font-size:1.5rem}
+.logo span{color:var(--warm)}
+.hero{padding:36px 0 28px}
+h1{font-family:Fraunces,Georgia,serif;font-weight:800;font-size:clamp(2.2rem,6vw,4rem);line-height:1.08;margin:0 0 14px;max-width:14ch}
+.hero p{color:var(--muted);font-size:1.1rem;max-width:52ch;margin:0}
+.studio{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;margin:22px 0 40px}
+.tabs{display:inline-flex;background:var(--bg);border-radius:12px;padding:4px;margin-bottom:18px}
+.tabs button{border:0;background:none;color:var(--muted);font:600 1rem Hind,sans-serif;padding:8px 20px;border-radius:9px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--accent);color:var(--accent-ink)}
+textarea,select,input{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px}
+textarea{min-height:96px;resize:vertical}
+label{display:block;font-weight:600;margin:14px 0 6px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:600px){.row{grid-template-columns:1fr}}
+.go{margin-top:18px;background:var(--accent);color:var(--accent-ink);border:0;border-radius:12px;font:600 1.05rem Hind,sans-serif;padding:13px 26px;cursor:pointer}
+.go:disabled{opacity:.6;cursor:wait}
+:focus-visible{outline:3px solid var(--warm);outline-offset:2px}
+.out{margin-top:22px;min-height:60px}
+.out img,.out video{max-width:100%;border-radius:14px;display:block}
+.msg{color:var(--muted)}
+.err{color:var(--warm);font-weight:600}
+.dl{display:inline-block;margin-top:10px;color:var(--accent);font-weight:600}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;cursor:pointer}
+.hidden{display:none}
+details{margin-top:14px;color:var(--muted)}
+footer{padding-bottom:40px;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<header><div class="logo">Rachna<span>.</span></div></header>
+<main>
+<section class="hero">
+  <h1>Likho, aur photo ya video ban jaye.</h1>
+  <p>Apna idea hindi ya english mein likho. AI usse photo ya video mein badal dega.</p>
+</section>
 
+<section class="studio" aria-label="AI studio">
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-photo" aria-selected="true">Photo</button>
+    <button role="tab" id="t-video" aria-selected="false">Video</button>
+  </div>
+
+  <div id="p-photo">
+    <label for="pp">Aap kya banana chahte ho?</label>
+    <textarea id="pp" placeholder="Jaise: Prayagraj ke sangam par sunrise, painting style"></textarea>
+    <div class="row">
+      <div><label for="ps">Style</label>
+        <select id="ps"><option value="">Realistic</option><option>digital painting</option><option>anime style</option><option>3D render</option><option>watercolor</option><option>cinematic photo</option></select></div>
+      <div><label for="pz">Size</label>
+        <select id="pz"><option value="1024x1024">Square</option><option value="1280x720">Wide</option><option value="720x1280">Tall</option></select></div>
+    </div>
+    <button class="go" id="gp">Photo banao</button>
+    <div class="out" id="op"><p class="msg">Aapki photo yahan dikhegi.</p></div>
+    <div class="gallery" id="gal"></div>
+  </div>
+
+  <div id="p-video" class="hidden">
+    <label for="vp">Video ka idea likho</label>
+    <textarea id="vp" placeholder="Jaise: ek kisaan khet mein subah ke waqt, drone shot"></textarea>
+    <button class="go" id="gv">Video banao</button>
+    <div class="out" id="ov"><p class="msg">Aapki video yahan dikhegi.</p></div>
+    <details>
+      <summary>Video API setup (ek baar)</summary>
+      <p>Video banane ke liye ek server chahiye jo aapki API key ke saath kaam kare. Key kabhi website mein mat daalo. Apne server ka URL yahan daalo. Server ko <code>POST {"prompt": "..."}</code> lena hai aur <code>{"url": "video-link"}</code> wapas dena hai.</p>
+      <label for="api">Server URL</label>
+      <input id="api" type="url" placeholder="https://your-server.example.com/video">
+    </details>
+  </div>
+</section>
+</main>
+<footer>AI se bani content ko share karne se pehle ek baar check kar lena.</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+function tab(which){
+  const photo=which==='photo';
+  $('p-photo').classList.toggle('hidden',!photo);
+  $('p-video').classList.toggle('hidden',photo);
+  $('t-photo').setAttribute('aria-selected',photo);
+  $('t-video').setAttribute('aria-selected',!photo);
+}
+$('t-photo').onclick=()=>tab('photo');
+$('t-video').onclick=()=>tab('video');
+
+$('gp').onclick=()=>{
+  const idea=$('pp').value.trim();
+  const out=$('op');
+  if(!idea){out.innerHTML='<p class="err">Pehle apna idea likho.</p>';return;}
+  const style=$('ps').value;
+  const [w,h]=$('pz').value.split('x');
+  const prompt=style?idea+', '+style:idea;
+  const url='https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt)+'?width='+w+'&height='+h+'&nologo=true&seed='+Math.floor(Math.random()*1e6);
+  const btn=$('gp');btn.disabled=true;
+  out.innerHTML='<p class="msg">Photo ban rahi hai...</p>';
+  const img=new Image();
+  img.alt=idea;
+  img.onload=()=>{
+    out.innerHTML='';out.appendChild(img);
+    const a=document.createElement('a');a.className='dl';a.href=url;a.target='_blank';a.rel='noopener';a.textContent='Photo kholo aur save karo';
+    out.appendChild(a);
+    const t=new Image();t.src=url;t.alt=idea;t.onclick=()=>{out.innerHTML='';out.appendChild(img);};
+    $('gal').prepend(t);
+    btn.disabled=false;
+  };
+  img.onerror=()=>{out.innerHTML='<p class="err">Photo nahi ban payi. Internet check karo aur dobara try karo.</p>';btn.disabled=false;};
+  img.src=url;
+};
+
+$('gv').onclick=async()=>{
+  const idea=$('vp').value.trim();
+  const out=$('ov');
+  if(!idea){out.innerHTML='<p class="err">Pehle apna idea likho.</p>';return;}
+  const api=$('api').value.trim();
+  if(!api){out.innerHTML='<p class="err">Video API setup mein apna server URL daalo.</p>';$('p-video').querySelector('details').open=true;return;}
+  const btn=$('gv');btn.disabled=true;
+  out.innerHTML='<p class="msg">Video ban rahi hai. Isme kuch minute lag sakte hain...</p>';
+  try{
+    const r=await fetch(api,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:idea})});
+    if(!r.ok)throw new Error('Server ne error diya ('+r.status+')');
+    const d=await r.json();
+    if(!d.url)throw new Error('Server ne video link nahi bheja');
+    out.innerHTML='';
+    const v=document.createElement('video');v.src=d.url;v.controls=true;v.autoplay=true;v.loop=true;v.muted=true;
+    out.appendChild(v);
+  }catch(e){
+    out.innerHTML='<p class="err">Video nahi ban payi: '+e.message+'</p>';
+  }
+  btn.disabled=false;
+};
+</script>
+</body>
+</html>
